@@ -25,15 +25,16 @@ var db = mysql.createConnection({
 });
 
 var server = app.listen(3000, function(){
-  var host = server.address().address
-  var port = server.address().port
   console.log("start");
 
 });
 
 db.connect(function(error){
   if(error) console.log(error);
-  else console.log("connected");
+  else{
+    console.log("Run on http://localhost:3000");
+    console.log("connected");
+  }  
 });
 
 app.get('/history', function(req, res){
