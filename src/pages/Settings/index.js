@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 20,
+    // paddingTop: StatusBar.currentHeight,
   },
 
   //d
@@ -95,8 +96,8 @@ const styles = StyleSheet.create({
   header: {
     // backgroundColor: 'grey',
     flexDirection: 'row',
+    alignContent: 'center',
     justifyContent: 'space-between',
-    paddingTop: 12,
     paddingTop: 15,
     paddingBottom: 15,
   },

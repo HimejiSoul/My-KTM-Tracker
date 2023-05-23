@@ -49,8 +49,8 @@ app.get('/history', function(req, res){
   });
 });
 
-app.get('/data', function(req, res){
-  db.query('SELECT * FROM data', function(error, rows, fields){
+app.get('/users', function(req, res){
+  db.query('SELECT * FROM users', function(error, rows, fields){
         if(error) console.log(error);
         else{
             console.log(rows);
@@ -63,7 +63,7 @@ app.get('/data', function(req, res){
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  const query = `SELECT * FROM data WHERE username = '${username}' AND password = '${password}'`;
+  const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
 
   db.query(query, (err, results) => {
     if (err) {

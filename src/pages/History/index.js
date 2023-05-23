@@ -7,7 +7,7 @@ class YourComponent extends Component {
   };
 
   fetchData= async()=>{
-    const response = await fetch('http://192.168.0.112:3000/history');
+    const response = await fetch('http://192.168.1.9:3000/history');
     const users = await response.json();
     this.setState({data: users});
   }
@@ -64,7 +64,7 @@ class YourComponent extends Component {
           renderItem={({item}) => (
             <View style={styles.item}>
               <Text style={styles.title}>{item.place}</Text>
-              <Text style={styles.subtitle}>{item.time.replace('T', ' ').replace('Z', ' ').slice(0, 19)}</Text>
+              <Text style={styles.subtitle}>{item.time.replace('T', ' ').replace('Z', ' ').slice(11, 16)}</Text>
             </View>
           )}
         />
@@ -78,7 +78,10 @@ export default YourComponent;
 const styles = StyleSheet.create({
   //c
   container: {
-    marginHorizontal: 20,
+    flex: 1,
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    // paddingTop: StatusBar.currentHeight,
   },
 
   //h
@@ -93,7 +96,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   header: {
-    paddingTop: 12,
+    // backgroundColor: 'grey',
+    flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent: 'space-between',
     paddingTop: 15,
     paddingBottom: 15,
   },

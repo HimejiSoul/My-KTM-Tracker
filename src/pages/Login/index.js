@@ -9,14 +9,12 @@ const Login = ({ navigation }) => {
   
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.0.112:3000/login', { username, password });
+      const response = await axios.post('http://192.168.1.9:3000/login', { username, password });
 
-      // Handle successful login
       console.log(response.data.message);
       navigation.navigate('MainApp')
     } catch (error) {
-      // Handle login error
-      // console.error('Login error:', error.response);
+
       Alert.alert('Login Failed', 'Invalid username or password');
     }
   };
@@ -133,5 +131,4 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: 'row',
   }
-});
-
+})
