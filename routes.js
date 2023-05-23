@@ -31,14 +31,10 @@ var server = app.listen(3000, function(){
 
 db.connect(function(error){
   if(error) console.log(error);
-<<<<<<< Updated upstream
   else{
     console.log("Run on http://localhost:3000");
     console.log("connected");
   }  
-=======
-  else console.log("connected");
->>>>>>> Stashed changes
 });
 
 app.get('/history', function(req, res){
