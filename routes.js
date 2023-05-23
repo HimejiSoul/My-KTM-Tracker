@@ -7,7 +7,6 @@ var mysql = require('mysql');
 var bodyParser = require('body-parser');
 const cors = require('cors');
 
-
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.json({type:'application/json'}));
@@ -32,7 +31,7 @@ var server = app.listen(3000, function(){
 db.connect(function(error){
   if(error) console.log(error);
   else{
-    console.log("Run on http://localhost:3000");
+    console.log("Run on http://localhost:3000/history");
     console.log("connected");
   }  
 });
@@ -56,14 +55,13 @@ app.get('/users', function(req, res){
             console.log(rows);
             res.send(rows);
         }
-
   });
 });
 
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+  const query = `SELECT nim, nama FROM users WHERE username = '${username}' AND password = '${password}'`;
 
   db.query(query, (err, results) => {
     if (err) {
@@ -75,8 +73,30 @@ app.post('/login', (req, res) => {
     if (results.length === 0) {
       res.status(401).json({ error: 'Invalid username or password.' });
     } else {
+      const user = results[0];
+      const { nim, nama } = user;
 
-      res.json({ message: 'Login successful' });
+      const insertQuery = `UPDATE sessions SET nim = '${nim}', nama = '${nama}' WHERE id = 1`;
+
+      db.query(insertQuery, (insertErr) => {
+        if (insertErr) {
+          console.error('Error storing session data in MySQL:', insertErr);
+          res.status(500).json({ error: 'An unexpected error occurred.' });
+        } else {
+          console.log(nama,nim);
+          res.json({ message: 'Login successful' });
+        }
+      });
     }
+  });
+});
+
+app.get('/sessions', function(req, res){
+  db.query('SELECT nama,nim FROM sessions WHERE id = 1', function(error, rows, fields){
+        if(error) console.log(error);
+        else{
+          console.log(rows);
+          res.send(rows);
+        }
   });
 });

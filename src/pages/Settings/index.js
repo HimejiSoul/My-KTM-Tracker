@@ -1,7 +1,25 @@
-import React, { useState } from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity} from 'react-native';
+import React, { useEffect,useState} from 'react';
+import {SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import axios from 'axios';
 
 const Settings = ({ navigation }) => {
+
+  const [nama, setNama] = useState('');
+  const [nim, setNim] = useState('');
+
+  useEffect(() => {
+    axios.get('http://192.168.1.9:3000/sessions')
+      .then(response => {
+        const { nama, nim } = response.data[0];
+        setNama(nama);
+        setNim(nim);
+        console.log(response.data[0]);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -16,8 +34,8 @@ const Settings = ({ navigation }) => {
         </View>
         <View style={styles.section}>
           <View>
-            <Text style={styles.title}>Zaidan Luthfi</Text>
-            <Text style={styles.subtitle}>1103204040</Text>
+            <Text style={styles.title}>{nama}</Text>
+            <Text style={styles.subtitle}>{nim}</Text>
           </View>
         </View>
         <View style={styles.section}>
