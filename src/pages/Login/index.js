@@ -45,13 +45,6 @@ const Login = ({ navigation }) => {
           value={password}
           secureTextEntry={true}
         />
-        <View style={styles.remember}>
-          <View style={styles.checkboxContainer}>
-            <TouchableOpacity style={styles.checkBox}></TouchableOpacity>
-          <Text style={styles.h2}>Remember me</Text>
-          </View>
-          <Text style={styles.h2}>Forgot Password?</Text>
-        </View>
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>LOGIN</Text>
         </TouchableOpacity>

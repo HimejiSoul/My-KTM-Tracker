@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import {SectionList, StyleSheet, Text, View} from 'react-native';
 
 class YourComponent extends Component {
+  
   state = {
     data: []
   };

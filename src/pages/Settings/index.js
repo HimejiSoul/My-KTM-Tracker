@@ -24,9 +24,6 @@ const Settings = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.h1}>Settings</Text>
-        <Image style={styles.profilePicture}
-          source={require('../../assets/img/picture-profile.png')}
-        />
       </View>
       <ScrollView style={styles.scrollView}>
         <View style={styles.section}>
@@ -37,14 +34,6 @@ const Settings = ({ navigation }) => {
             <Text style={styles.title}>{nama}</Text>
             <Text style={styles.subtitle}>{nim}</Text>
           </View>
-        </View>
-        <View style={styles.section}>
-          <View>
-            <Text style={styles.title}>Change profile picture</Text>
-          </View>
-          <Image style={styles.icon}
-            source={require('../../assets/img/arrow_forward.png')}
-          />
         </View>
         <View style={styles.divider}></View>
 

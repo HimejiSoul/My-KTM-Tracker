@@ -14,18 +14,18 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());
 
 var db = mysql.createConnection({
-    host:'localhost',
-    port:'3306',
-    user:'rfidadmin',
-    password:'rfidadmin',
-    database: 'rfid',
-    timezone: 'Asia/Jakarta'
-
+  host:'localhost',
+  port:'3306',
+  user:'rfidadmin',
+  password:'rfidadmin',
+  database: 'rfid',
+  timezone: 'Asia/Jakarta'
+  
 });
 
 var server = app.listen(3000, function(){
   console.log("start");
-
+  
 });
 
 db.connect(function(error){
@@ -36,32 +36,35 @@ db.connect(function(error){
   }  
 });
 
+let globalUid;
+
 app.get('/history', function(req, res){
-  db.query('SELECT * FROM history ORDER BY time DESC', function(error, rows, fields){
-        if(error) console.log(error);
-
-        else{
-            console.log(rows);
-            res.send(rows);
-        }
-
+  
+  
+  db.query('SELECT * FROM history WHERE uid=? ORDER BY time DESC',[globalUid], function(error, rows, fields){
+    if(error) console.log(error);
+    
+    else{
+      console.log(globalUid);
+      res.send(rows);
+    }
   });
 });
 
-app.get('/users', function(req, res){
-  db.query('SELECT * FROM users', function(error, rows, fields){
-        if(error) console.log(error);
-        else{
-            console.log(rows);
-            res.send(rows);
-        }
-  });
-});
+// app.get('/users', function(req, res){
+//   db.query('SELECT * FROM users', function(error, rows, fields){
+//         if(error) console.log(error);
+//         else{
+//             console.log(rows);
+//             res.send(rows);
+//         }
+//   });
+// });
 
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  const query = `SELECT nim, nama FROM users WHERE username = '${username}' AND password = '${password}'`;
+  const query = `SELECT nim, nama,uid FROM users WHERE username = '${username}' AND password = '${password}'`;
 
   db.query(query, (err, results) => {
     if (err) {
@@ -74,16 +77,17 @@ app.post('/login', (req, res) => {
       res.status(401).json({ error: 'Invalid username or password.' });
     } else {
       const user = results[0];
-      const { nim, nama } = user;
+      const { nim, nama,uid } = user;
 
-      const insertQuery = `UPDATE sessions SET nim = '${nim}', nama = '${nama}' WHERE id = 1`;
+      const insertQuery = `UPDATE sessions SET nim = '${nim}', nama = '${nama}',uid = '${uid}' WHERE id = 1`;
 
       db.query(insertQuery, (insertErr) => {
         if (insertErr) {
           console.error('Error storing session data in MySQL:', insertErr);
           res.status(500).json({ error: 'An unexpected error occurred.' });
         } else {
-          console.log(nama,nim);
+          console.log(nama,nim,uid);
+          globalUid =uid;
           res.json({ message: 'Login successful' });
         }
       });
@@ -91,11 +95,12 @@ app.post('/login', (req, res) => {
   });
 });
 
+
 app.get('/sessions', function(req, res){
-  db.query('SELECT nama,nim FROM sessions WHERE id = 1', function(error, rows, fields){
+  db.query('SELECT nama,nim,uid FROM sessions WHERE id = 1', function(error, rows, fields){
         if(error) console.log(error);
         else{
-          console.log(rows);
+          console.log(globalUid);
           res.send(rows);
         }
   });
