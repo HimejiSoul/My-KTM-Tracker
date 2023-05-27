@@ -9,7 +9,7 @@ const Login = ({ navigation }) => {
   
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.1.9:3000/login', { username, password });
+      const response = await axios.post('http://192.168.1.10:3000/login', { username, password });
 
       console.log(response.data.message);
       navigation.navigate('MainApp')
@@ -85,7 +85,8 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     marginBottom: 10,
     borderRadius: 8,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    color:'black',
   },
   button: {
     marginTop: 30,

@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
 import {Alert, ScrollView, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity} from 'react-native';
+import axios from 'axios';
 
 const Active = ({ navigation }) => {
-  const createTwoButtonAlert = () =>
+  const createTwoButtonAlert = () =>{
     Alert.alert('Block your card?', 'Kartu KTM Anda akan tidak dapat digunakan kembali setelah melakukan blokir kartu. Untuk mengaktifkannya kembali, hubungi administrator.', [
       {
         text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',
       },
-      {text: 'Block card', onPress: () => {navigation.replace('Blocked');}},
+      {text: 'Block card', onPress: async () => {
+        try {
+          const response = await axios.post('http://192.168.1.10:3000/block');
+          console.log(response.data);
+          navigation.replace('Blocked');
+        } catch (error) {
+          console.error('An error occurred:', error);
+        }
+        }},
     ]);
-    
+  }
   return (
     <View style={styles.container}>
       <View style={styles.header}>

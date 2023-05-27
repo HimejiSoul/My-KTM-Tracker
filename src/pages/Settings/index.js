@@ -8,7 +8,7 @@ const Settings = ({ navigation }) => {
   const [nim, setNim] = useState('');
 
   useEffect(() => {
-    axios.get('http://192.168.1.9:3000/sessions')
+    axios.get('http://192.168.1.10:3000/sessions')
       .then(response => {
         const { nama, nim } = response.data[0];
         setNama(nama);

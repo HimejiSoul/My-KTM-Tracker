@@ -36,35 +36,34 @@ db.connect(function(error){
   }  
 });
 
-let globalUid;
+let globalUid,globalusername;
 
 app.get('/history', function(req, res){
-  
   
   db.query('SELECT * FROM history WHERE uid=? ORDER BY time DESC',[globalUid], function(error, rows, fields){
     if(error) console.log(error);
     
     else{
-      console.log(globalUid);
+      console.log(rows);
       res.send(rows);
     }
   });
 });
 
-// app.get('/users', function(req, res){
-//   db.query('SELECT * FROM users', function(error, rows, fields){
-//         if(error) console.log(error);
-//         else{
-//             console.log(rows);
-//             res.send(rows);
-//         }
-//   });
-// });
+app.get('/users', function(req, res){
+  db.query('SELECT * FROM users', function(error, rows, fields){
+        if(error) console.log(error);
+        else{
+            console.log(rows);
+            res.send(rows);
+        }
+  });
+});
 
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  const query = `SELECT nim, nama,uid FROM users WHERE username = '${username}' AND password = '${password}'`;
+  const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
 
   db.query(query, (err, results) => {
     if (err) {
@@ -77,17 +76,18 @@ app.post('/login', (req, res) => {
       res.status(401).json({ error: 'Invalid username or password.' });
     } else {
       const user = results[0];
-      const { nim, nama,uid } = user;
+      const { nim, nama, uid, username, status} = user;
 
-      const insertQuery = `UPDATE sessions SET nim = '${nim}', nama = '${nama}',uid = '${uid}' WHERE id = 1`;
+      const insertQuery = `UPDATE sessions SET nim = '${nim}', nama = '${nama}',uid = '${uid}',username = '${username}', status = '${status}' WHERE id = 1`;
 
       db.query(insertQuery, (insertErr) => {
         if (insertErr) {
           console.error('Error storing session data in MySQL:', insertErr);
           res.status(500).json({ error: 'An unexpected error occurred.' });
         } else {
-          console.log(nama,nim,uid);
+          console.log(nama,nim,uid,username,status);
           globalUid =uid;
+          globalusername=username;
           res.json({ message: 'Login successful' });
         }
       });
@@ -97,11 +97,30 @@ app.post('/login', (req, res) => {
 
 
 app.get('/sessions', function(req, res){
-  db.query('SELECT nama,nim,uid FROM sessions WHERE id = 1', function(error, rows, fields){
+  db.query('SELECT * FROM sessions WHERE id = 1', function(error, rows, fields){
         if(error) console.log(error);
         else{
-          console.log(globalUid);
+          console.log(rows);
           res.send(rows);
         }
+  });
+});
+
+app.post('/block', (req, res) => {
+
+  const query = `UPDATE users SET status = 'deny' WHERE username = '${globalusername}'`;
+
+  db.query(query, (err, result) => {
+    if (err) {
+      console.error('Error updating user status:', err);
+      res.status(500).json({ error: 'An error occurred' });
+      return;
+    }
+    if (result.affectedRows === 0) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+    res.json({ message: 'User status updated successfully' });
+    console.log('User status updated successfully');
   });
 });

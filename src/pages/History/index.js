@@ -8,13 +8,20 @@ class YourComponent extends Component {
   };
 
   fetchData= async()=>{
-    const response = await fetch('http://192.168.1.9:3000/history');
+    const response = await fetch('http://192.168.1.10:3000/history');
     const users = await response.json();
     this.setState({data: users});
   }
 
   componentDidMount() {
     this.fetchData();
+    this.interval = setInterval(() => {
+      this.fetchData();
+    }, 5000); // Refresh data every 5 seconds
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval); // Clear the interval when the component unmounts
   }
 
   render() {
