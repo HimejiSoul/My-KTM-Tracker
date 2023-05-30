@@ -40,7 +40,7 @@ function MainApp() {
           />
         );
       },
-      tabBarStyle: { height: 55, paddingTop: 5,backgroundColor:'#f7efef' },
+      tabBarStyle: { height: 55, paddingTop: 5,backgroundColor:'#f7efef', display: "flex" },
         tabBarActiveTintColor: "tomato",
         tabBarInactiveTintColor: "gray",
       tabBarLabelStyle: {
@@ -48,11 +48,6 @@ function MainApp() {
         margin: 1,
         padding: 1
       },
-      tabBarStyle: [
-          {
-            display: "flex"
-          },
-        ]
     })}
       // tabBarOptions={{
       //   activeTintColor: 'tomato',

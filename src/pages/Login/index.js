@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import {
+  Alert,
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Platform,
+  StatusBar,
+  View, } from 'react-native';
 import axios from 'axios';
+import { PRIMARY50, NEUTRAL20, NEUTRAL50 } from '../../styles/color';
+
 
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
