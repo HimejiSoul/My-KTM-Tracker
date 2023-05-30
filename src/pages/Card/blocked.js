@@ -1,7 +1,36 @@
-import React, { useState } from 'react';
-import {Alert, ScrollView, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import axios from 'axios';
 
 const Blocked = ({ navigation }) => {
+
+  const [lastPlace, setLastPlace] = useState('');
+  const [lastTaping, setLastTaping] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://192.168.1.12:3000/history');
+        const { place, time } = response.data[0];
+        setLastPlace(place);
+        setLastTaping(time);
+      } catch (error) {
+        console.error('An error occurred:', error);
+      }
+    };
+  
+    // Fetch data initially
+    fetchData();
+  
+    // Set interval to fetch data every 5 seconds
+    const interval = setInterval(fetchData, 5000);
+  
+    // Clean up the interval on component unmount
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   const alert = () =>
     Alert.alert('Kartu telah terblokir', 'Kartu KTM Anda telah terblokir. Untuk mengaktifkannya kembali hubungi administrator.', [
       {
@@ -10,7 +39,7 @@ const Blocked = ({ navigation }) => {
         style: 'close',
       },
     ]);
-    
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -38,7 +67,7 @@ const Blocked = ({ navigation }) => {
             <Text style={styles.title}>Last Place</Text>
           </View>
           <View style={styles.sectionRight}>
-            <Text style={styles.subtitle}>Gedung TULT</Text>
+            <Text style={styles.subtitle}>{lastPlace}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>
@@ -48,11 +77,10 @@ const Blocked = ({ navigation }) => {
             <Text style={styles.title}>Last Taping</Text>
           </View>
           <View style={styles.sectionRight}>
-            <Text style={styles.subtitle}>19:30</Text>
+            <Text style={styles.subtitle}>{lastTaping.slice(11, 16)}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>
-
         <View style={styles.section}>
           <View style={styles.sectionLeft}>
             <Text style={styles.title}>Lost your card?</Text>
@@ -139,7 +167,7 @@ const styles = StyleSheet.create({
 
   },
   sectionLeft: {
-    
+
   },
   sectionRight: {
 

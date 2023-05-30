@@ -1,16 +1,16 @@
-import React,{Component} from 'react';
-import {SectionList, StyleSheet, Text, View} from 'react-native';
+import React, { Component } from 'react';
+import { SectionList, StyleSheet, Text, View } from 'react-native';
 
 class YourComponent extends Component {
-  
+
   state = {
     data: []
   };
 
-  fetchData= async()=>{
-    const response = await fetch('http://192.168.1.10:3000/history');
+  fetchData = async () => {
+    const response = await fetch('http://192.168.1.12:3000/history');
     const users = await response.json();
-    this.setState({data: users});
+    this.setState({ data: users });
   }
 
   componentDidMount() {
@@ -28,13 +28,13 @@ class YourComponent extends Component {
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    
+
     const dataBySection = {};
-    
+
     this.state.data.forEach((item) => {
       const itemDate = new Date(item.time);
       let sectionTitle;
-    
+
       if (itemDate.toDateString() === today.toDateString()) {
         sectionTitle = 'Today';
       } else if (itemDate.toDateString() === yesterday.toDateString()) {
@@ -42,34 +42,34 @@ class YourComponent extends Component {
       } else {
         sectionTitle = itemDate.toLocaleDateString();
       }
-    
+
       if (!dataBySection[sectionTitle]) {
         dataBySection[sectionTitle] = [];
       }
-    
+
       dataBySection[sectionTitle].push(item);
-    }); 
+    });
 
 
     const sections = Object.keys(dataBySection).map((key) => ({
       title: key,
       data: dataBySection[key],
     }));
-  
+
     return (
       <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.h1}>History</Text>
-      </View>
+        <View style={styles.header}>
+          <Text style={styles.h1}>History</Text>
+        </View>
         <SectionList
           sections={sections}
           keyExtractor={(item, index) => index.toString()}
-          renderSectionHeader={({section: {title}}) => (
+          renderSectionHeader={({ section: { title } }) => (
             <View style={styles.section}>
               <Text style={styles.h2}>{title}</Text>
             </View>
           )}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View style={styles.item}>
               <Text style={styles.title}>{item.place}</Text>
               <Text style={styles.subtitle}>{item.time.replace('T', ' ').replace('Z', ' ').slice(11, 16)}</Text>
@@ -79,7 +79,7 @@ class YourComponent extends Component {
       </View>
     );
   }
-}  
+}
 
 export default YourComponent;
 
@@ -138,6 +138,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     paddingLeft: 8,
-    color:'black'
+    color: 'black'
   }
 });

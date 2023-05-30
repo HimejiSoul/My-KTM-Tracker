@@ -1,24 +1,55 @@
-import React, { useState } from 'react';
-import {Alert, ScrollView, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, ScrollView, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 
 const Active = ({ navigation }) => {
-  const createTwoButtonAlert = () =>{
+
+  const [lastPlace, setLastPlace] = useState('');
+  const [lastTaping, setLastTaping] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://192.168.1.12:3000/history');
+        const { place, time } = response.data[0];
+        setLastPlace(place);
+        setLastTaping(time);
+      } catch (error) {
+        console.error('An error occurred:', error);
+      }
+    };
+  
+    // Fetch data initially
+    fetchData();
+  
+    // Set interval to fetch data every 5 seconds
+    const interval = setInterval(fetchData, 5000);
+  
+    // Clean up the interval on component unmount
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+  
+
+  const createTwoButtonAlert = () => {
     Alert.alert('Block your card?', 'Kartu KTM Anda akan tidak dapat digunakan kembali setelah melakukan blokir kartu. Untuk mengaktifkannya kembali, hubungi administrator.', [
       {
         text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',
       },
-      {text: 'Block card', onPress: async () => {
-        try {
-          const response = await axios.post('http://192.168.1.10:3000/block');
-          console.log(response.data);
-          navigation.replace('Blocked');
-        } catch (error) {
-          console.error('An error occurred:', error);
+      {
+        text: 'Block card', onPress: async () => {
+          try {
+            const response = await axios.post('http://192.168.1.12:3000/block');
+            console.log(response.data);
+            navigation.replace('Blocked');
+          } catch (error) {
+            console.error('An error occurred:', error);
+          }
         }
-        }},
+      },
     ]);
   }
   return (
@@ -48,7 +79,7 @@ const Active = ({ navigation }) => {
             <Text style={styles.title}>Last Place</Text>
           </View>
           <View style={styles.sectionRight}>
-            <Text style={styles.subtitle}>Gedung TULT</Text>
+            <Text style={styles.subtitle}>{lastPlace}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>
@@ -58,7 +89,7 @@ const Active = ({ navigation }) => {
             <Text style={styles.title}>Last Taping</Text>
           </View>
           <View style={styles.sectionRight}>
-            <Text style={styles.subtitle}>19:30</Text>
+            <Text style={styles.subtitle}>{lastTaping.slice(11, 16)}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>
@@ -141,7 +172,7 @@ const styles = StyleSheet.create({
 
   },
   sectionLeft: {
-    
+
   },
   sectionRight: {
 
@@ -165,6 +196,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '500',
-    color:'black',
+    color: 'black',
   },
 });

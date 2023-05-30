@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View,Alert } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import axios from 'axios';
 
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  
+
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.1.10:3000/login', { username, password });
+      const response = await axios.post('http://192.168.1.12:3000/login', { username, password });
 
       console.log(response.data.message);
       navigation.navigate('MainApp')
@@ -18,14 +18,14 @@ const Login = ({ navigation }) => {
       Alert.alert('Login Failed', 'Invalid username or password');
     }
   };
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.imgContainer}>
-        <Image style={{height: 40, resizeMode: 'contain', marginBottom: 30}}
+        <Image style={{ height: 40, resizeMode: 'contain', marginBottom: 30 }}
           source={require('../../assets/img/logo.png')}
         />
-        <Image style={{height: 220, resizeMode: 'contain'}}
+        <Image style={{ height: 220, resizeMode: 'contain' }}
           source={require('../../assets/img/flat-illustration.png')}
         />
       </View>
@@ -66,10 +66,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
 
-  img: {
-    height: 10,
-    resizeMode: 'contain'
-  }
+    img: {
+      height: 10,
+      resizeMode: 'contain'
+    }
   },
   contentContainer: {
     flex: 1,
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 8,
     backgroundColor: 'white',
-    color:'black',
+    color: 'black',
   },
   button: {
     marginTop: 30,

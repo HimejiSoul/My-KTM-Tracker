@@ -12,11 +12,10 @@ function Card() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://192.168.1.10:3000/sessions')
+    axios.get('http://192.168.1.12:3000/sessions')
       .then(response => {
         const { status } = response.data[0];
         setStatus(status);
-        
         if (status === 'allow') {
           setInitialRouteName('Active');
         } else {
@@ -33,9 +32,6 @@ function Card() {
   if (isLoading) {
     return null;
   }
-
-  console.log(status);
-  console.log(initialRouteName);
 
   return (
     <Stack.Navigator initialRouteName={initialRouteName}>

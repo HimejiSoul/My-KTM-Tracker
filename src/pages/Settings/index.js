@@ -1,5 +1,5 @@
-import React, { useEffect,useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 
 const Settings = ({ navigation }) => {
@@ -8,7 +8,7 @@ const Settings = ({ navigation }) => {
   const [nim, setNim] = useState('');
 
   useEffect(() => {
-    axios.get('http://192.168.1.10:3000/sessions')
+    axios.get('http://192.168.1.12:3000/sessions')
       .then(response => {
         const { nama, nim } = response.data[0];
         setNama(nama);
@@ -63,7 +63,7 @@ const Settings = ({ navigation }) => {
         <View style={styles.divider}></View>
         <TouchableOpacity style={styles.button} onPress={() =>
           navigation.navigate('Login')
-          }>
+        }>
           <Text style={styles.logout}>Log Out</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -147,6 +147,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '500',
-    color:'black'
+    color: 'black'
   },
 });
