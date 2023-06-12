@@ -1,35 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity } from 'react-native';
-import axios from 'axios';
+// import axios from 'axios';
+import { collection, query, orderBy, onSnapshot, where } from 'firebase/firestore';
+import db from '../../../firebase-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Active = ({ navigation }) => {
 
   const [lastPlace, setLastPlace] = useState('');
-  const [lastTaping, setLastTaping] = useState('');
-
+  const [lastTime, setLastTime] = useState('');
+  
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await axios.get('http://192.168.1.12:3000/history');
-        const { place, time } = response.data[0];
-        setLastPlace(place);
-        setLastTaping(time);
-      } catch (error) {
-        console.error('An error occurred:', error);
-      }
+      const uid = await AsyncStorage.getItem('uid');
+      const q = query(
+        collection(db, 'history'),
+        where('uid', '==', uid),
+        orderBy('time', 'desc')
+      );
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const data = [];
+        snapshot.forEach((doc) => {
+          const item = doc.data();
+          const formattedData = {
+            ...item,
+            time: item.time.toDate().toLocaleString(),
+          };
+          data.push(formattedData);
+        });
+        if (data.length > 0){
+        setLastPlace(data[0].place);
+        setLastTime(data[0].time);
+        console.log(data[0].time);
+        console.log(data[0].place);
+        }
+      });
+      return unsubscribe; // Use the return value of onSnapshot as the unsubscribe function
     };
   
-    // Fetch data initially
-    fetchData();
+    const unsubscribe = fetchData();
+    return () => unsubscribe(); // Call the returned unsubscribe function when the component unmounts
+  }, []);  
   
-    // Set interval to fetch data every 5 seconds
-    const interval = setInterval(fetchData, 5000);
-  
-    // Clean up the interval on component unmount
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
   
 
   const createTwoButtonAlert = () => {
@@ -41,13 +53,13 @@ const Active = ({ navigation }) => {
       },
       {
         text: 'Block card', onPress: async () => {
-          try {
-            const response = await axios.post('http://192.168.1.12:3000/block');
-            console.log(response.data);
-            navigation.replace('Blocked');
-          } catch (error) {
-            console.error('An error occurred:', error);
-          }
+          // try {
+          //   const response = await axios.post('http://192.168.1.13:3000/block');
+          //   console.log(response.data);
+          //   navigation.replace('Blocked');
+          // } catch (error) {
+          //   console.error('An error occurred:', error);
+          // }
         }
       },
     ]);
@@ -89,7 +101,7 @@ const Active = ({ navigation }) => {
             <Text style={styles.title}>Last Taping</Text>
           </View>
           <View style={styles.sectionRight}>
-            <Text style={styles.subtitle}>{lastTaping.slice(11, 16)}</Text>
+            <Text style={styles.subtitle}>{lastTime.slice(10)}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>
@@ -130,7 +142,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    // paddingTop: StatusBar.currentHeight,
+    paddingTop: StatusBar.currentHeight,
   },
 
   //d

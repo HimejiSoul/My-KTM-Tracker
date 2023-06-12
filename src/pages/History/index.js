@@ -1,60 +1,71 @@
-import React, { Component } from 'react';
-import { SectionList, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SectionList, StyleSheet, Text, View, StatusBar } from 'react-native';
+import moment from 'moment';
+import { collection, query, orderBy, onSnapshot, where } from 'firebase/firestore';
+import db from '../../../firebase-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class YourComponent extends Component {
+const History = () => {
 
-  state = {
-    data: []
-  };
+  const [fetchedData, setFetchedData] = useState([]);
 
-  fetchData = async () => {
-    const response = await fetch('http://192.168.1.12:3000/history');
-    const users = await response.json();
-    this.setState({ data: users });
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      const uid = await AsyncStorage.getItem('uid'); // Assuming you have stored the uid in AsyncStorage
+      const q = query(collection(db, 'history'),
+      where('uid',"==", uid),
+      orderBy('time', 'desc')
+      );
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const data = [];
+        snapshot.forEach((doc) => {
+          const item = doc.data();
+          const formattedData = {
+            ...item,
+            time: item.time.toDate().toLocaleString(),
+          };
+          data.push(formattedData);
+        });
+        console.log(data);
+        setFetchedData(data);
+      });
+      return unsubscribe;
+    };
+    const unsubscribe = fetchData();
+    return () => unsubscribe();
+  }, []);
+  
 
-  componentDidMount() {
-    this.fetchData();
-    this.interval = setInterval(() => {
-      this.fetchData();
-    }, 5000); // Refresh data every 5 seconds
-  }
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
 
-  componentWillUnmount() {
-    clearInterval(this.interval); // Clear the interval when the component unmounts
-  }
+  const dataBySection = {};
 
-  render() {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+  fetchedData.forEach((item) => {
+    const itemDate = moment(item.time, 'M/D/YYYY, h:mm:ss A').toDate();
+    let sectionTitle;
 
-    const dataBySection = {};
+    if (itemDate.toDateString() === today.toDateString()) {
+      sectionTitle = 'Today';
+    } else if (itemDate.toDateString() === yesterday.toDateString()) {
+      sectionTitle = 'Yesterday';
+    } else {
+      sectionTitle = itemDate.toLocaleDateString();
+    }
 
-    this.state.data.forEach((item) => {
-      const itemDate = new Date(item.time);
-      let sectionTitle;
+    if (!dataBySection[sectionTitle]) {
+      dataBySection[sectionTitle] = [];
+    }
 
-      if (itemDate.toDateString() === today.toDateString()) {
-        sectionTitle = 'Today';
-      } else if (itemDate.toDateString() === yesterday.toDateString()) {
-        sectionTitle = 'Yesterday';
-      } else {
-        sectionTitle = itemDate.toLocaleDateString();
-      }
+    dataBySection[sectionTitle].push(item);
+  });
 
-      if (!dataBySection[sectionTitle]) {
-        dataBySection[sectionTitle] = [];
-      }
+  const sections = Object.keys(dataBySection).map((key) => ({
+    title: key,
+    data: dataBySection[key],
+  }));
 
-      dataBySection[sectionTitle].push(item);
-    });
-
-
-    const sections = Object.keys(dataBySection).map((key) => ({
-      title: key,
-      data: dataBySection[key],
-    }));
 
     return (
       <View style={styles.container}>
@@ -72,16 +83,15 @@ class YourComponent extends Component {
           renderItem={({ item }) => (
             <View style={styles.item}>
               <Text style={styles.title}>{item.place}</Text>
-              <Text style={styles.subtitle}>{item.time.replace('T', ' ').replace('Z', ' ').slice(11, 16)}</Text>
+              <Text style={styles.subtitle}>{item.time.slice(10)}</Text>
             </View>
           )}
         />
       </View>
     );
   }
-}
 
-export default YourComponent;
+export default History;
 
 const styles = StyleSheet.create({
   //c
@@ -89,14 +99,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    // paddingTop: StatusBar.currentHeight,
+    paddingTop: StatusBar.currentHeight,
   },
 
   //h
   h1: {
     color: '#372F2F',
     fontSize: 22,
-    fontWeight: '500',
+    fontFamily: 'PlusJakartaSans-SemiBold'
   },
   h2: {
     color: '#645D5D',

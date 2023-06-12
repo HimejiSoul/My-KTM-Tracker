@@ -1,23 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import axios from 'axios';
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, StatusBar } from 'react-native';
+// import { doc, getDoc } from "firebase/firestore";
+// import db from "../../../firebase-config"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Settings = ({ navigation }) => {
 
   const [nama, setNama] = useState('');
   const [nim, setNim] = useState('');
+  const [jurusan, setJurusan] = useState('');
 
   useEffect(() => {
-    axios.get('http://192.168.1.12:3000/sessions')
-      .then(response => {
-        const { nama, nim } = response.data[0];
-        setNama(nama);
-        setNim(nim);
-        console.log(response.data[0]);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    const fetchData = async () => {
+      try {
+        const namaValue = await AsyncStorage.getItem('nama');
+        const nimValue = await AsyncStorage.getItem('nim');
+        const jurusanValue = await AsyncStorage.getItem('jurusan');
+  
+        if (namaValue && nimValue && jurusanValue) {
+          setNama(namaValue);
+          setNim(nimValue);
+          setJurusan(jurusanValue);
+        } else {
+          console.log('No such data in AsyncStorage!');
+        }
+      } catch (error) {
+        console.log('Error retrieving data from AsyncStorage:', error);
+      }
+    };
+  
+    fetchData();
   }, []);
 
   return (
@@ -32,7 +44,10 @@ const Settings = ({ navigation }) => {
         <View style={styles.section}>
           <View>
             <Text style={styles.title}>{nama}</Text>
-            <Text style={styles.subtitle}>{nim}</Text>
+            <View  style={styles.otherSection}>
+              <Text style={styles.subtitle}>{jurusan}  |  </Text>
+              <Text style={styles.subtitle}>{nim}</Text>
+            </View>
           </View>
         </View>
         <View style={styles.divider}></View>
@@ -79,7 +94,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    // paddingTop: StatusBar.currentHeight,
+    paddingTop: StatusBar.currentHeight,
   },
 
   //d
@@ -93,12 +108,12 @@ const styles = StyleSheet.create({
   h1: {
     color: '#372F2F',
     fontSize: 22,
-    fontWeight: '500',
+    fontFamily: 'PlusJakartaSans-SemiBold'
   },
   h2: {
     color: '#645D5D',
     fontSize: 20,
-    fontWeight: '500',
+    fontFamily: 'PlusJakartaSans-SemiBold',
   },
   header: {
     // backgroundColor: 'grey',
@@ -119,8 +134,15 @@ const styles = StyleSheet.create({
   logout: {
     alignSelf: 'center',
     fontSize: 16,
-    fontWeight: '500',
-    color: '#EA5455'
+    color: '#EA5455',
+    fontFamily: 'PlusJakartaSans-Bold',
+  },
+
+  //o
+  otherSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 
   //p
@@ -146,7 +168,7 @@ const styles = StyleSheet.create({
   //t
   title: {
     fontSize: 16,
-    fontWeight: '500',
-    color: 'black'
+    color: 'black',
+    fontFamily: 'PlusJakartaSans-SemiBold',
   },
 });

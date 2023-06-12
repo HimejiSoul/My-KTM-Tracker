@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, StatusBar } from 'react-native';
 import axios from 'axios';
 
 const Blocked = ({ navigation }) => {
@@ -10,7 +10,7 @@ const Blocked = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://192.168.1.12:3000/history');
+        const response = await axios.get('http://192.168.1.13:3000/history');
         const { place, time } = response.data[0];
         setLastPlace(place);
         setLastTaping(time);
@@ -45,7 +45,10 @@ const Blocked = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.h1}>Your RFID Card</Text>
       </View>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView 
+        style={styles.scrollView}
+        showsHorizontalScrollIndicator={false}
+      >
         <View style={styles.cardImgContainer}>
           <Image style={styles.cardImg}
             source={require('../../assets/img/ktm-disable.png')}
@@ -120,7 +123,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    // paddingTop: StatusBar.currentHeight,
+    paddingTop: StatusBar.currentHeight,
   },
 
   //d
@@ -134,7 +137,7 @@ const styles = StyleSheet.create({
   h1: {
     color: '#372F2F',
     fontSize: 22,
-    fontWeight: '500',
+    fontFamily: 'PlusJakartaSans-SemiBold'
   },
   header: {
     // backgroundColor: 'grey',

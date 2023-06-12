@@ -6,6 +6,7 @@ var jwt = require('jsonwebtoken');
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
 const cors = require('cors');
+const AsyncStorage = require('@react-native-async-storage/async-storage').default;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -42,7 +43,6 @@ app.get('/history', function (req, res) {
 
   db.query('SELECT * FROM history WHERE uid=? ORDER BY time DESC', [globalUid], function (error, rows, fields) {
     if (error) console.log(error);
-
     else {
       console.log(rows);
       res.send(rows);
@@ -71,13 +71,11 @@ app.post('/login', (req, res) => {
       res.status(500).json({ error: 'An unexpected error occurred.' });
       return;
     }
-
     if (results.length === 0) {
       res.status(401).json({ error: 'Invalid username or password.' });
     } else {
       const user = results[0];
       const { nim, nama, uid, username, status } = user;
-
       const insertQuery = `UPDATE sessions SET nim = '${nim}', nama = '${nama}',uid = '${uid}',username = '${username}', status = '${status}' WHERE id = 1`;
 
       db.query(insertQuery, (insertErr) => {
