@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, StatusBar } from 'react-native';
-// import { doc, getDoc } from "firebase/firestore";
-// import db from "../../../firebase-config"
+import { SafeAreaView, ScrollView, StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Settings = ({ navigation }) => {
@@ -28,9 +26,18 @@ const Settings = ({ navigation }) => {
         console.log('Error retrieving data from AsyncStorage:', error);
       }
     };
-  
     fetchData();
   }, []);
+
+    const handleLogout = async () => {
+      try {
+        await AsyncStorage.clear();
+        // Navigate to the Login screen or any other screen after clearing AsyncStorage
+        navigation.navigate('Login');
+      } catch (error) {
+        console.log('Error clearing AsyncStorage:', error);
+      }
+    };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -76,11 +83,9 @@ const Settings = ({ navigation }) => {
           </View>
         </View>
         <View style={styles.divider}></View>
-        <TouchableOpacity style={styles.button} onPress={() =>
-          navigation.navigate('Login')
-        }>
-          <Text style={styles.logout}>Log Out</Text>
-        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleLogout}>
+      <Text style={styles.logout}>Log Out</Text>
+    </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );

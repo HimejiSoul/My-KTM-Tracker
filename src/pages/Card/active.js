@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity } from 'react-native';
 // import axios from 'axios';
-import { collection, query, orderBy, onSnapshot, where } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, where,updateDoc, getDocs } from 'firebase/firestore';
 import db from '../../../firebase-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Blocked from './blocked';
 
 const Active = ({ navigation }) => {
 
@@ -18,6 +19,7 @@ const Active = ({ navigation }) => {
         where('uid', '==', uid),
         orderBy('time', 'desc')
       );
+      
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const data = [];
         snapshot.forEach((doc) => {
@@ -35,35 +37,46 @@ const Active = ({ navigation }) => {
         console.log(data[0].place);
         }
       });
-      return unsubscribe; // Use the return value of onSnapshot as the unsubscribe function
     };
-  
-    const unsubscribe = fetchData();
-    return () => unsubscribe(); // Call the returned unsubscribe function when the component unmounts
+  fetchData(); // Call the returned unsubscribe function when the component unmounts
   }, []);  
   
   
 
-  const createTwoButtonAlert = () => {
-    Alert.alert('Block your card?', 'Kartu KTM Anda akan tidak dapat digunakan kembali setelah melakukan blokir kartu. Untuk mengaktifkannya kembali, hubungi administrator.', [
-      {
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
-      },
-      {
-        text: 'Block card', onPress: async () => {
-          // try {
-          //   const response = await axios.post('http://192.168.1.13:3000/block');
-          //   console.log(response.data);
-          //   navigation.replace('Blocked');
-          // } catch (error) {
-          //   console.error('An error occurred:', error);
-          // }
-        }
-      },
-    ]);
-  }
+  const createTwoButtonAlert = async () => {
+    Alert.alert(
+      'Block your card?',
+      'Kartu KTM Anda akan tidak dapat digunakan kembali setelah melakukan blokir kartu. Untuk mengaktifkannya kembali, hubungi administrator.',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Block card',
+          onPress: async () => {
+            try {
+              const uid = await AsyncStorage.getItem('uid');
+              const querySnapshot = await getDocs(collection(db, 'users'));
+              querySnapshot.forEach(async (doc) => {
+                const data = doc.data();
+                if (data.uid === uid) {
+                  await updateDoc(doc.ref, { status: 'deny' });
+                }
+              });
+              console.log('Card blocked');
+              navigation.navigate('Blocked');
+            } catch (error) {
+              console.error('An error occurred:', error);
+            }
+          },
+        },
+      ]
+    );
+  };
+  
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>

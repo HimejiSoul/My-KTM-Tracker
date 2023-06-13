@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { 
   Alert,
   Image,
@@ -22,8 +22,7 @@ const Login = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
-
+  useEffect(() => {
     const printAsyncStorageContents = async () => {
       try {
         const name = await AsyncStorage.getItem('nama');
@@ -31,12 +30,39 @@ const Login = ({ navigation }) => {
         const jurusan = await AsyncStorage.getItem('jurusan');
         const status = await AsyncStorage.getItem('status');
         const uid = await AsyncStorage.getItem('uid');
-    
+        const token = await AsyncStorage.getItem('token');
+
         console.log('Name:', name);
         console.log('NIM:', nim);
         console.log('Jurusan:', jurusan);
         console.log('status:', status);
         console.log('uid:', uid);
+        console.log('token:', token);
+      } catch (error) {
+        console.log('Error retrieving data from AsyncStorage:', error);
+      }
+    };
+    
+    printAsyncStorageContents();
+  }, []);
+  
+  const handleLogin = async () => {
+    
+    const printAsyncStorageContents = async () => {
+      try {
+        const name = await AsyncStorage.getItem('nama');
+        const nim = await AsyncStorage.getItem('nim');
+        const jurusan = await AsyncStorage.getItem('jurusan');
+        const status = await AsyncStorage.getItem('status');
+        const uid = await AsyncStorage.getItem('uid');
+        const token = await AsyncStorage.getItem('token');
+        
+        console.log('Name:', name);
+        console.log('NIM:', nim);
+        console.log('Jurusan:', jurusan);
+        console.log('status:', status);
+        console.log('uid:', uid);
+        console.log('token:', token);
       } catch (error) {
         console.log('Error retrieving data from AsyncStorage:', error);
       }
@@ -56,6 +82,7 @@ const Login = ({ navigation }) => {
           AsyncStorage.setItem('jurusan', data.jurusan);
           AsyncStorage.setItem('status', data.status);
           AsyncStorage.setItem('uid', data.uid);
+          AsyncStorage.setItem('token', 'boleh masuk');
           navigation.navigate('MainApp');
           isLoggedIn = true; // Set the flag to true
           printAsyncStorageContents();
