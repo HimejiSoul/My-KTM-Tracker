@@ -1,102 +1,99 @@
-import React, { Component } from 'react';
-import { SectionList, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SectionList, StyleSheet, Text, View, StatusBar } from 'react-native';
+import moment from 'moment';
+import { collection, query, orderBy, onSnapshot, where } from 'firebase/firestore';
+import db from '../../../firebase-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class YourComponent extends Component {
+const History = () => {
+  const [fetchedData, setFetchedData] = useState([]);
 
-  state = {
-    data: []
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      const uid = await AsyncStorage.getItem('uid');
+      const q = query(
+        collection(db, 'history'),
+        where('uid', '==', uid),
+        orderBy('time', 'desc')
+      );
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          time: doc.data().time.toDate().toLocaleString(),
+        }));
+        setFetchedData(data);
+      });
+    };
+    fetchData();
+  }, []);
 
-  fetchData = async () => {
-    const response = await fetch('http://192.168.1.12:3000/history');
-    const users = await response.json();
-    this.setState({ data: users });
-  }
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
 
-  componentDidMount() {
-    this.fetchData();
-    this.interval = setInterval(() => {
-      this.fetchData();
-    }, 5000); // Refresh data every 5 seconds
-  }
+  const dataBySection = {};
 
-  componentWillUnmount() {
-    clearInterval(this.interval); // Clear the interval when the component unmounts
-  }
+  fetchedData.forEach((item) => {
+    const itemDate = moment(item.time, 'M/D/YYYY, h:mm:ss A').toDate();
+    let sectionTitle;
 
-  render() {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+    if (itemDate.toDateString() === today.toDateString()) {
+      sectionTitle = 'Today';
+    } else if (itemDate.toDateString() === yesterday.toDateString()) {
+      sectionTitle = 'Yesterday';
+    } else {
+      sectionTitle = itemDate.toLocaleDateString();
+    }
 
-    const dataBySection = {};
+    if (!dataBySection[sectionTitle]) {
+      dataBySection[sectionTitle] = [];
+    }
 
-    this.state.data.forEach((item) => {
-      const itemDate = new Date(item.time);
-      let sectionTitle;
+    dataBySection[sectionTitle].push(item);
+  });
 
-      if (itemDate.toDateString() === today.toDateString()) {
-        sectionTitle = 'Today';
-      } else if (itemDate.toDateString() === yesterday.toDateString()) {
-        sectionTitle = 'Yesterday';
-      } else {
-        sectionTitle = itemDate.toLocaleDateString();
-      }
+  const sections = Object.keys(dataBySection).map((key) => ({
+    title: key,
+    data: dataBySection[key],
+  }));
 
-      if (!dataBySection[sectionTitle]) {
-        dataBySection[sectionTitle] = [];
-      }
-
-      dataBySection[sectionTitle].push(item);
-    });
-
-
-    const sections = Object.keys(dataBySection).map((key) => ({
-      title: key,
-      data: dataBySection[key],
-    }));
-
-    return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.h1}>History</Text>
-        </View>
-        <SectionList
-          sections={sections}
-          keyExtractor={(item, index) => index.toString()}
-          renderSectionHeader={({ section: { title } }) => (
-            <View style={styles.section}>
-              <Text style={styles.h2}>{title}</Text>
-            </View>
-          )}
-          renderItem={({ item }) => (
-            <View style={styles.item}>
-              <Text style={styles.title}>{item.place}</Text>
-              <Text style={styles.subtitle}>{item.time.replace('T', ' ').replace('Z', ' ').slice(11, 16)}</Text>
-            </View>
-          )}
-        />
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.h1}>History</Text>
       </View>
-    );
-  }
-}
+      <SectionList
+        sections={sections}
+        keyExtractor={(item, index) => index.toString()}
+        renderSectionHeader={({ section: { title } }) => (
+          <View style={styles.section}>
+            <Text style={styles.h2}>{title}</Text>
+          </View>
+        )}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Text style={styles.title}>{item.place}</Text>
+            <Text style={styles.subtitle}>{item.time.slice(10)}</Text>
+          </View>
+        )}
+      />
+    </View>
+  );
+};
 
-export default YourComponent;
+export default History;
 
 const styles = StyleSheet.create({
-  //c
   container: {
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    // paddingTop: StatusBar.currentHeight,
+    paddingTop: StatusBar.currentHeight,
   },
-
-  //h
   h1: {
     color: '#372F2F',
     fontSize: 22,
-    fontWeight: '500',
+    fontFamily: 'PlusJakartaSans-SemiBold',
   },
   h2: {
     color: '#645D5D',
@@ -104,27 +101,22 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   header: {
-    // backgroundColor: 'grey',
     flexDirection: 'row',
     alignContent: 'center',
     justifyContent: 'space-between',
     paddingTop: 15,
     paddingBottom: 15,
   },
-
-  //i
   item: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 12,
   },
-
-  //s
   section: {
-    borderTopColor: '#CDC5C5', // Color of the border
+    borderTopColor: '#CDC5C5',
     borderTopStyle: 'solid',
-    borderTopWidth: 1, // Width of the border
+    borderTopWidth: 1,
     marginTop: -2,
     paddingTop: 20,
   },
@@ -132,12 +124,10 @@ const styles = StyleSheet.create({
     color: '#7D7676',
     fontSize: 14,
   },
-
-  //t
   title: {
     fontSize: 16,
     fontWeight: '500',
     paddingLeft: 8,
-    color: 'black'
-  }
+    color: 'black',
+  },
 });

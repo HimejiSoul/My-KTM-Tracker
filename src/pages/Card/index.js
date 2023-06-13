@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Active from './active';
 import Blocked from './blocked';
-import axios from 'axios';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -12,9 +13,9 @@ function Card() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://192.168.1.12:3000/sessions')
-      .then(response => {
-        const { status } = response.data[0];
+    const fetchStatus = async () => {
+      try {
+        const status = await AsyncStorage.getItem('status');
         setStatus(status);
         if (status === 'allow') {
           setInitialRouteName('Active');
@@ -22,11 +23,13 @@ function Card() {
           setInitialRouteName('Blocked');
         }
         setIsLoading(false);
-      })
-      .catch(error => {
+        console.log("statusnya",status)
+      } catch (error) {
         console.log(error);
         setIsLoading(false);
-      });
+      }
+    };
+    fetchStatus();
   }, []);
 
   if (isLoading) {

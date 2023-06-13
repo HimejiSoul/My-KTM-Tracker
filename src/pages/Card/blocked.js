@@ -1,35 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import axios from 'axios';
-
+import { Alert, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, StatusBar } from 'react-native';
+import { collection, query, orderBy, onSnapshot, where } from 'firebase/firestore';
+import db from '../../../firebase-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Blocked = ({ navigation }) => {
 
   const [lastPlace, setLastPlace] = useState('');
-  const [lastTaping, setLastTaping] = useState('');
-
+  const [lastTime, setLastTime] = useState('');
+  
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await axios.get('http://192.168.1.12:3000/history');
-        const { place, time } = response.data[0];
-        setLastPlace(place);
-        setLastTaping(time);
-      } catch (error) {
-        console.error('An error occurred:', error);
-      }
+      const uid = await AsyncStorage.getItem('uid');
+      const q = query(
+        collection(db, 'history'),
+        where('uid', '==', uid),
+        orderBy('time', 'desc')
+      );
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const data = [];
+        snapshot.forEach((doc) => {
+          const item = doc.data();
+          const formattedData = {
+            ...item,
+            time: item.time.toDate().toLocaleString(),
+          };
+          data.push(formattedData);
+        });
+        if (data.length > 0){
+        setLastPlace(data[0].place);
+        setLastTime(data[0].time);
+        console.log(data[0].time);
+        console.log(data[0].place);
+        }
+      });
     };
-  
-    // Fetch data initially
     fetchData();
-  
-    // Set interval to fetch data every 5 seconds
-    const interval = setInterval(fetchData, 5000);
-  
-    // Clean up the interval on component unmount
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  }, []);  
 
   const alert = () =>
     Alert.alert('Kartu telah terblokir', 'Kartu KTM Anda telah terblokir. Untuk mengaktifkannya kembali hubungi administrator.', [
@@ -45,7 +51,10 @@ const Blocked = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.h1}>Your RFID Card</Text>
       </View>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView 
+        style={styles.scrollView}
+        showsHorizontalScrollIndicator={false}
+      >
         <View style={styles.cardImgContainer}>
           <Image style={styles.cardImg}
             source={require('../../assets/img/ktm-disable.png')}
@@ -77,7 +86,7 @@ const Blocked = ({ navigation }) => {
             <Text style={styles.title}>Last Taping</Text>
           </View>
           <View style={styles.sectionRight}>
-            <Text style={styles.subtitle}>{lastTaping.slice(11, 16)}</Text>
+            <Text style={styles.subtitle}>{lastTime.slice(10)}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>
@@ -120,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    // paddingTop: StatusBar.currentHeight,
+    paddingTop: StatusBar.currentHeight,
   },
 
   //d
@@ -134,7 +143,7 @@ const styles = StyleSheet.create({
   h1: {
     color: '#372F2F',
     fontSize: 22,
-    fontWeight: '500',
+    fontFamily: 'PlusJakartaSans-SemiBold'
   },
   header: {
     // backgroundColor: 'grey',

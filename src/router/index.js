@@ -2,17 +2,15 @@ import * as React from 'react';
 import { Image } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import { Ionicons } from '@expo/vector-icons';
+import { PRIMARY50, NEUTRAL30, NEUTRAL95 } from '../styles/color';
 import { Login, Card, History, Settings, Splash } from '../pages'
-import { BottomNavigation } from '../components'
-// import { IconCard, IconCardActive, IconHistory, IconHistoryActive, IconSettings, IconSettingsActive } from '../assets/index'
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function MainApp() {
   return (
-    <Tab.Navigator
+    <Tab.Navigator initialRouteName='Card'
     screenOptions={({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
         let iconSource;
@@ -35,33 +33,30 @@ function MainApp() {
 
         return (
           <Image
-            style={{ width: 50, height: 25 }}
+            style={{
+              height: '100%',
+              resizeMode: 'contain',
+              width: '80%',
+            }}
             source={iconSource}
           />
         );
       },
-      tabBarStyle: { height: 55, paddingTop: 5,backgroundColor:'#f7efef' },
-        tabBarActiveTintColor: "tomato",
-        tabBarInactiveTintColor: "gray",
-      tabBarLabelStyle: {
-        marginBottom: 2,
-        margin: 1,
-        padding: 1
+
+      tabBarActiveTintColor: PRIMARY50,
+      tabBarInactiveTintColor: NEUTRAL30,
+      tabBarStyle:{
+        height: '8%',
+        paddingTop: 6,
+        backgroundColor: NEUTRAL95,
       },
-      tabBarStyle: [
-          {
-            display: "flex"
-          },
-        ]
+      tabBarLabelStyle:{
+        fontSize: 12,
+        paddingBottom: 8,
+        paddingTop: 0,
+        fontFamily: 'PlusJakartaSans-SemiBold',
+      },
     })}
-      // tabBarOptions={{
-      //   activeTintColor: 'tomato',
-      //   inactiveTintColor: 'gray',
-      //   labelStyle: {
-      //     marginBottom: 2, // adjust the margin bottom
-      //     padding: 2, // adjust the padding
-      //   }
-      // }}
     >
       <Tab.Screen name="Card" component={Card} options={{ headerShown: false }}/>
       <Tab.Screen name="History" component={History} options={{ headerShown: false }}/>

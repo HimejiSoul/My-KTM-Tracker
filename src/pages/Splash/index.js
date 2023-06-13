@@ -1,13 +1,24 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Image, View, Text } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Splash({ navigation }) {
-
   useEffect(() => {
-      setTimeout(() => {
+    const checkToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token === 'boleh masuk') {
+          navigation.replace('MainApp');
+        } else {
+          navigation.replace('Login');
+        }
+      } catch (error) {
+        console.log('Error retrieving token from AsyncStorage:', error);
         navigation.replace('Login');
-      }, 3000)
-  }, [navigation])
+      }
+    };
+    setTimeout(checkToken, 3000);
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
