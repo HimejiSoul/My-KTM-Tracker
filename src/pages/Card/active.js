@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity } from 'react-native';
-// import axios from 'axios';
 import { collection, query, orderBy, onSnapshot, where,updateDoc, getDocs } from 'firebase/firestore';
 import db from '../../../firebase-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Blocked from './blocked';
+import moment from 'moment';
 
 const Active = ({ navigation }) => {
 
@@ -114,7 +114,7 @@ const Active = ({ navigation }) => {
             <Text style={styles.title}>Last Taping</Text>
           </View>
           <View style={styles.sectionRight}>
-            <Text style={styles.subtitle}>{lastTime.slice(10)}</Text>
+          <Text style={styles.subtitle}>{moment(lastTime, 'M/D/YYYY, h:mm:ss A').format('HH:mm')}</Text>
           </View>
         </View>
         <View style={styles.divider}></View>

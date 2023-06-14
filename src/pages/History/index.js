@@ -73,7 +73,7 @@ const History = () => {
         renderItem={({ item }) => (
           <View style={styles.item}>
             <Text style={styles.title}>{item.place}</Text>
-            <Text style={styles.subtitle}>{item.time.slice(10)}</Text>
+            <Text style={styles.subtitle}>{moment(item.time, 'M/D/YYYY, h:mm:ss A').format('HH:mm')}</Text>
           </View>
         )}
       />
