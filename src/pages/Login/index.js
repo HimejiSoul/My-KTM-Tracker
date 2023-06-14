@@ -42,7 +42,6 @@ const Login = ({ navigation }) => {
         console.log('Error retrieving data from AsyncStorage:', error);
       }
     };
-    
     printAsyncStorageContents();
   }, []);
   

@@ -25,7 +25,7 @@ const History = () => {
       });
     };
     fetchData();
-  }, []);
+  });
 
   const today = new Date();
   const yesterday = new Date(today);
