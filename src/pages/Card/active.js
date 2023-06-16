@@ -19,7 +19,7 @@ const Active = ({ navigation }) => {
         where('uid', '==', uid),
         orderBy('time', 'desc')
       );
-      
+
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const data = [];
         snapshot.forEach((doc) => {
@@ -31,16 +31,16 @@ const Active = ({ navigation }) => {
           data.push(formattedData);
         });
         if (data.length > 0){
-        setLastPlace(data[0].place);
-        setLastTime(data[0].time);
-        console.log(data[0].time);
-        console.log(data[0].place);
+          setLastPlace(data[0].place);
+          setLastTime(data[0].time);
+          console.log(data[0].time);
+          console.log(data[0].place);
         }
       });
     };
-  fetchData(); // Call the returned unsubscribe function when the component unmounts
-  }, []);  
-  
+    fetchData(); // Call the returned unsubscribe function when the component unmounts
+  });
+    
   
 
   const createTwoButtonAlert = async () => {

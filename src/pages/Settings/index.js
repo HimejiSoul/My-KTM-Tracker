@@ -27,7 +27,7 @@ const Settings = ({ navigation }) => {
       }
     };
     fetchData();
-  }, []);
+  });
 
     const handleLogout = async () => {
       try {

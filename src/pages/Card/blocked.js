@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 
 
-const Blocked = ({ navigation }) => {
+const Blocked = () => {
 
   const [lastPlace, setLastPlace] = useState('');
   const [lastTime, setLastTime] = useState('');
@@ -38,7 +38,7 @@ const Blocked = ({ navigation }) => {
       });
     };
     fetchData();
-  }, []);  
+  });  
 
   const alert = () =>
     Alert.alert('Kartu telah terblokir', 'Kartu KTM Anda telah terblokir. Untuk mengaktifkannya kembali hubungi administrator.', [
