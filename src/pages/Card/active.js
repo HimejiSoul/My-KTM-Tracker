@@ -84,8 +84,11 @@ const Active = ({ navigation }) => {
       </View>
       <ScrollView style={styles.scrollView}>
         <View style={styles.cardImgContainer}>
+          <Image style={styles.circleImage}
+            source={require('../../assets/ktm-img/circle-background.png')}
+          />
           <Image style={styles.cardImg}
-            source={require('../../assets/img/ktm-active.png')}
+            source={require('../../assets/ktm-img/muhammad-hilmy-aziz.png')}
           />
         </View>
 
@@ -141,6 +144,7 @@ export default Active;
 const styles = StyleSheet.create({
   //c
   cardImg: {
+    position: 'absolute',
     alignSelf: 'center',
     height: 265,
     width: 348,
