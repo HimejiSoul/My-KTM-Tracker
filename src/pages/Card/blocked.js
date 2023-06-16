@@ -4,6 +4,7 @@ import { collection, query, orderBy, onSnapshot, where } from 'firebase/firestor
 import db from '../../../firebase-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
+import { Grayscale } from 'react-native-color-matrix-image-filters';
 
 
 const Blocked = () => {
@@ -59,14 +60,20 @@ const Blocked = () => {
         showsHorizontalScrollIndicator={false}
       >
         <View style={styles.cardImgContainer}>
-          <Image style={styles.cardImg}
-            source={require('../../assets/img/ktm-disable.png')}
-          />
+          <Grayscale style={styles.circleImage}>
+            <Image
+              source={require('../../assets/ktm-img/circle-background.png')}
+            />
+          </Grayscale>
+          <Grayscale style={styles.cardImg}>
+            <Image
+              source={require('../../assets/ktm-img/muhammad-hilmy-aziz.png')}
+            />
+          </Grayscale>
         </View>
-
         <View style={styles.section}>
           <View style={styles.sectionLeft}>
-            <Text style={styles.title}>Status</Text>
+            <Text style={styles.title}>Statusyy</Text>
           </View>
           <View style={styles.subtitleBlock}>
             <Text style={styles.subtitleBlock}>Blocked</Text>
@@ -118,7 +125,8 @@ export default Blocked;
 const styles = StyleSheet.create({
   //c
   cardImg: {
-    alignSelf: 'center',
+    position: 'absolute',
+    alignItems: 'center',
     height: 265,
     width: 348,
     resizeMode: 'contain',
@@ -126,13 +134,16 @@ const styles = StyleSheet.create({
   cardImgContainer: {
     justifyContent: 'center',
     paddingVertical: 64,
-    // backgroundColor: 'grey',
+    alignSelf: 'center',
   },
   container: {
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 20,
     paddingTop: StatusBar.currentHeight,
+  },
+  circleImage: {
+    alignItems: 'center',
   },
 
   //d
