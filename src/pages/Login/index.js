@@ -82,7 +82,7 @@ const Login = ({ navigation }) => {
           AsyncStorage.setItem('status', data.status);
           AsyncStorage.setItem('uid', data.uid);
           AsyncStorage.setItem('token', 'boleh masuk');
-          navigation.navigate('MainApp');
+          navigation.replace('MainApp');
           isLoggedIn = true; // Set the flag to true
           printAsyncStorageContents();
           console.log('Login successful');
