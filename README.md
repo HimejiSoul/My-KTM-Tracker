@@ -68,10 +68,10 @@ The following libraries are used in the My KTM Tracker application:
 - AsyncStorage
 - Firestore
 - React Navigation
-- @react-navigation/native-stack
-- @react-navigation/bottom-tabs
 - Moment
 - @react-navigation/native
+- @react-navigation/native-stack
+- @react-navigation/bottom-tabs
 
 ## Contribution
 
