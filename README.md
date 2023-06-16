@@ -1,5 +1,7 @@
 # My KTM Tracker
 
+![My-KTM-Tracker](src/assets/img/logo.png)
+
 My KTM Tracker is an application for tracking KTM (Kartu Tanda Mahasiswa) and detecting possible KTM cloning using the secret key method. The application displays tap history and provides a feature to block the KTM on RFID readers. It utilizes the WebSocket API for real-time communication and utilizes Firestore as the database for storing data.
 
 ## Installation
