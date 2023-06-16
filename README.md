@@ -35,8 +35,6 @@ Follow the steps below to run the My KTM Tracker application in your local envir
    npm start
    ```
 
-6. The My KTM Tracker application is now running at `http://localhost:3000`.
-
 ## Usage
 
 Once you have the application up and running, you can perform the following steps:
@@ -109,4 +107,4 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ## Contact
 
-If you have any questions, suggestions, or issues regarding the My KTM Tracker application, please contact us at [email@example.com](mailto:email@example.com).
+If you have any questions, suggestions, or issues regarding the My KTM Tracker application, please contact us at [perseushilmy@gmail.com].
