@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity } from 'react-native';
 import { collection, query, orderBy, onSnapshot, where,updateDoc, getDocs } from 'firebase/firestore';
+import { ref } from "firebase/storage";
 import db from '../../../firebase-config';
+import storage from '../../../firebase-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Blocked from './blocked';
 import moment from 'moment';
 
 const Active = ({ navigation }) => {
 
+  const hilmy = require('../../assets/ktm-img/muhammad-hilmy-aziz.png');
+  const tarek = require('../../assets/ktm-img/muhammad-tharreq-an-nahl.png');
+  const zaidan = require('../../assets/ktm-img/zaidan-luthfi.png');
   const [lastPlace, setLastPlace] = useState('');
   const [lastTime, setLastTime] = useState('');
+  const [foto, setFoto] = useState('');
   
   useEffect(() => {
     const fetchData = async () => {
       const uid = await AsyncStorage.getItem('uid');
+      const username = await AsyncStorage.getItem('username');
       const q = query(
         collection(db, 'history'),
         where('uid', '==', uid),
@@ -30,18 +37,28 @@ const Active = ({ navigation }) => {
           };
           data.push(formattedData);
         });
+
         if (data.length > 0){
           setLastPlace(data[0].place);
           setLastTime(data[0].time);
-          console.log(data[0].time);
-          console.log(data[0].place);
+          // console.log(lastPlace);
+          // console.log(lastTime);
+          // console.log(foto);
+        }
+
+        if (username) {
+          if (username === 'hilmy') {
+            setFoto(hilmy);
+          } else if (username === 'zaidan') {
+            setFoto(zaidan);
+          } else {
+            setFoto(tarek);
+          }
         }
       });
     };
     fetchData(); // Call the returned unsubscribe function when the component unmounts
-  });
-    
-  
+  },[]); 
 
   const createTwoButtonAlert = async () => {
     Alert.alert(
@@ -87,9 +104,9 @@ const Active = ({ navigation }) => {
           <Image style={styles.circleImage}
             source={require('../../assets/ktm-img/circle-background.png')}
           />
-          <Image style={styles.cardImg}
-            source={require('../../assets/ktm-img/muhammad-hilmy-aziz.png')}
-          />
+          {foto && (
+          <Image style={styles.cardImg} source={foto} />
+        )}
         </View>
 
         <View style={styles.section}>
