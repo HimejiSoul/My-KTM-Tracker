@@ -30,6 +30,7 @@ const Login = ({ navigation }) => {
         const jurusan = await AsyncStorage.getItem('jurusan');
         const status = await AsyncStorage.getItem('status');
         const uid = await AsyncStorage.getItem('uid');
+        const username = await AsyncStorage.getItem('username');
         const token = await AsyncStorage.getItem('token');
 
         console.log('Name:', name);
@@ -37,6 +38,7 @@ const Login = ({ navigation }) => {
         console.log('Jurusan:', jurusan);
         console.log('status:', status);
         console.log('uid:', uid);
+        console.log('username:', username);
         console.log('token:', token);
       } catch (error) {
         console.log('Error retrieving data from AsyncStorage:', error);
@@ -54,6 +56,7 @@ const Login = ({ navigation }) => {
         const jurusan = await AsyncStorage.getItem('jurusan');
         const status = await AsyncStorage.getItem('status');
         const uid = await AsyncStorage.getItem('uid');
+        const username = await AsyncStorage.getItem('username');
         const token = await AsyncStorage.getItem('token');
         
         console.log('Name:', name);
@@ -61,6 +64,7 @@ const Login = ({ navigation }) => {
         console.log('Jurusan:', jurusan);
         console.log('status:', status);
         console.log('uid:', uid);
+        console.log('username:', username);
         console.log('token:', token);
       } catch (error) {
         console.log('Error retrieving data from AsyncStorage:', error);
@@ -81,6 +85,7 @@ const Login = ({ navigation }) => {
           AsyncStorage.setItem('jurusan', data.jurusan);
           AsyncStorage.setItem('status', data.status);
           AsyncStorage.setItem('uid', data.uid);
+          AsyncStorage.setItem('username', data.username);
           AsyncStorage.setItem('token', 'boleh masuk');
           navigation.replace('MainApp');
           isLoggedIn = true; // Set the flag to true
